@@ -13,16 +13,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
-
   <style>
     :root {
       --bg-main: #030712;
       --bg-panel: #0b0f19;
       --bg-card: #111827;
       --border-color: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(16, 185, 129, 0.4);
       --accent-green: #10b981;
       --accent-cyan: #38bdf8;
       --accent-purple: #a855f7;
@@ -37,7 +33,7 @@
     /* Topbar moderna */
     .topbar {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 32px; background: rgba(11, 15, 25, 0.8);
+      padding: 16px 32px; background: rgba(11, 15, 25, 0.85);
       backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color);
       position: sticky; top: 0; z-index: 100;
     }
@@ -64,7 +60,7 @@
     /* Hero */
     .hero { text-align: center; margin-bottom: 40px; }
     .eyebrow { font-size: 12px; font-weight: 700; color: var(--accent-cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-    .hero h1 { font-size: 38px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero h1 { font-size: 38px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; color: #fff; }
     .hero-description { color: var(--text-muted); font-size: 16px; max-width: 600px; margin: 0 auto; line-height: 1.5; }
 
     /* Pannelli moderni */
@@ -103,5 +99,296 @@
 
     .stats-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 14px; text-align: center; }
-    .stat-box span { display: block; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom
-    
+    .stat-box span { display: block; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+    .stat-box strong { font-size: 22px; font-family: 'JetBrains Mono', monospace; color: #fff; }
+
+    /* Footer */
+    .footer { text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border-color); margin-top: auto; }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-icon">FQ</span>
+      <span>
+        <strong>FOOTBALL QUANT</strong>
+        <small>L'EVOLUZIONE DEL BETTING</small>
+      </span>
+    </a>
+
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      QUANTITATIVE ENGINE v3.0
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="hero">
+      <p class="eyebrow">NEXT-GEN ANALYTICS SUITE</p>
+      <h1>Scegli le squadre.<br>Domina il mercato con la matematica.</h1>
+      <p class="hero-description">
+        Inserisci i parametri della partita e le quote per generare un report predittivo completo basato sulla distribuzione di Poisson e sul Value Betting.
+      </p>
+    </section>
+
+    <!-- PANNELLO INPUT PRINCIPALE -->
+    <section class="panel" style="border-color: rgba(16, 185, 129, 0.3);">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">CONFIGURAZIONE MATCH</p>
+          <h2>Parametri di Calcolo & Mercato</h2>
+        </div>
+        <span class="status-badge">LIVE INPUT</span>
+      </div>
+
+      <form id="masterAnalysisForm">
+        <!-- Squadre -->
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Squadra A (Casa)</label>
+            <input id="teamHome" type="text" value="Inter" required>
+          </div>
+          <div class="input-group">
+            <label>Squadra B (Ospite)</label>
+            <input id="teamAway" type="text" value="Milan" required>
+          </div>
+        </div>
+
+        <!-- Expected Goals (xG) -->
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Expected Goals (xG) Casa (λA)</label>
+            <input id="lambdaH" type="number" min="0.1" max="6.0" step="0.05" value="1.65" required>
+          </div>
+          <div class="input-group">
+            <label>Expected Goals (xG) Ospite (λB)</label>
+            <input id="lambdaA" type="number" min="0.1" max="6.0" step="0.05" value="1.10" required>
+          </div>
+        </div>
+
+        <!-- Quote Bookmaker -->
+        <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 28px;">
+          <div class="input-group">
+            <label>Quota 1 (Casa)</label>
+            <input id="odds1" type="number" min="1.01" max="100" step="0.01" value="2.10" required>
+          </div>
+          <div class="input-group">
+            <label>Quota X (Pareggio)</label>
+            <input id="oddsX" type="number" min="1.01" max="100" step="0.01" value="3.40" required>
+          </div>
+          <div class="input-group">
+            <label>Quota 2 (Ospite)</label>
+            <input id="odds2" type="number" min="1.01" max="100" step="0.01" value="3.60" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-action">
+          🚀 Avvia Analisi Quantitativa Totale
+        </button>
+      </form>
+    </section>
+
+    <!-- RISULTATI DELL'ANALISI -->
+    <section class="panel results-container" id="masterResultsPanel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">REPORT PREDITTIVO</p>
+          <h2 id="reportHeaderTitle">Risultati Analisi</h2>
+        </div>
+        <span class="status-badge" style="color: var(--accent-purple); border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1);">REPORT PRONTO</span>
+      </div>
+
+      <!-- Sezione 1: 1X2 & Fair Odds -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 16px; color: var(--accent-cyan); margin-bottom: 16px; font-weight: 700;">📊 Probabilità Reali & Fair Odds (Mercato 1X2)</h3>
+        <div class="stats-card-grid" id="market1x2Grid"></div>
+      </div>
+
+      <!-- Sezione 2: Value Bet & Kelly -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 16px; color: var(--accent-green); margin-bottom: 16px; font-weight: 700;">🎯 Value Betting & Money Management (Criterio di Kelly)</h3>
+        <div id="valueBoxContent" style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 14px;"></div>
+      </div>
+
+      <!-- Sezione 3: Mercati Gol -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 16px; color: #facc15; margin-bottom: 16px; font-weight: 700;">⚽ Mercati Gol & Statistiche Avanzate</h3>
+        <div class="stats-card-grid" id="goalsMarketsGrid"></div>
+      </div>
+
+      <!-- Sezione 4: Risultati Esatti -->
+      <div>
+        <h3 style="font-size: 16px; color: var(--accent-purple); margin-bottom: 16px; font-weight: 700;">🔥 Top 3 Risultati Esatti Più Probabili</h3>
+        <div class="stats-card-grid" id="exactScoresGrid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>FOOTBALL QUANT · L'EVOLUZIONE DEL BETTING V3.0</p>
+    <p>Modellazione probabilistica avanzata e analisi quantitativa dei mercati.</p>
+  </footer>
+
+  <!-- SCRIPT DI CALCOLO QUANTITATIVO INTEGRATO -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('masterAnalysisForm');
+      if (!form) return;
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // 1. Recupero parametri
+        const teamHome = document.getElementById('teamHome').value || 'Casa';
+        const teamAway = document.getElementById('teamAway').value || 'Ospite';
+        const lambdaH = parseFloat(document.getElementById('lambdaH').value) || 1.5;
+        const lambdaA = parseFloat(document.getElementById('lambdaA').value) || 1.0;
+        
+        const odds1 = parseFloat(document.getElementById('odds1').value) || 2.0;
+        const oddsX = parseFloat(document.getElementById('oddsX').value) || 3.3;
+        const odds2 = parseFloat(document.getElementById('odds2').value) || 3.5;
+
+        // 2. Funzione Poisson
+        function poisson(k, lambda) {
+          return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+        }
+        function factorial(n) {
+          if (n === 0 || n === 1) return 1;
+          let res = 1;
+          for (let i = 2; i <= n; i++) res *= i;
+          return res;
+        }
+
+        let probHome = 0, probDraw = 0, probAway = 0;
+        const maxGoals = 8;
+        let exactScores = [];
+
+        for (let h = 0; h <= maxGoals; h++) {
+          for (let a = 0; a <= maxGoals; a++) {
+            const p = poisson(h, lambdaH) * poisson(a, lambdaA);
+            if (h > a) probHome += p;
+            else if (h === a) probDraw += p;
+            else probAway += p;
+            exactScores.push({ h, a, prob: p });
+          }
+        }
+
+        const total = probHome + probDraw + probAway;
+        const pHomePct = (probHome / total) * 100;
+        const pDrawPct = (probDraw / total) * 100;
+        const pAwayPct = (probAway / total) * 100;
+
+        const fair1 = 100 / pHomePct;
+        const fairX = 100 / pDrawPct;
+        const fair2 = 100 / pAwayPct;
+
+        let probOver25 = 0, probBtts = 0;
+        exactScores.forEach(item => {
+          if (item.h + item.a > 2.5) probOver25 += item.prob;
+          if (item.h > 0 && item.a > 0) probBtts += item.prob;
+        });
+        const pOverPct = (probOver25 / total) * 100;
+        const pBttsPct = (probBtts / total) * 100;
+
+        exactScores.sort((a, b) => b.prob - a.prob);
+        const topScores = exactScores.slice(0, 3);
+
+        const ev1 = (pHomePct / 100) * odds1 - 1;
+        const evX = (pDrawPct / 100) * oddsX - 1;
+        const ev2 = (pAwayPct / 100) * odds2 - 1;
+
+        let bestBet = { name: "Nessuna Value Bet rilevata", ev: -1, odds: 0, prob: 0 };
+        if (ev1 > 0 && ev1 >= evX && ev1 >= ev2) {
+          bestBet = { name: `Vittoria ${teamHome} (1)`, ev: ev1, odds: odds1, prob: pHomePct };
+        } else if (evX > 0 && evX >= ev1 && evX >= ev2) {
+          bestBet = { name: `Pareggio (X)`, ev: evX, odds: oddsX, prob: pDrawPct };
+        } else if (ev2 > 0 && ev2 >= ev1 && ev2 >= evX) {
+          bestBet = { name: `Vittoria ${teamAway} (2)`, ev: ev2, odds: odds2, prob: pAwayPct };
+        }
+
+        let kellyStake = 0;
+        if (bestBet.ev > 0) {
+          const b = bestBet.odds - 1;
+          const p = bestBet.prob / 100;
+          const q = 1 - p;
+          kellyStake = Math.max(0, ((b * p - q) / b) * 100);
+        }
+
+        // 3. Rendering HTML
+        document.getElementById('reportHeaderTitle').innerText = `${teamHome} vs ${teamAway} · Report Quantitativo`;
+
+        document.getElementById('market1x2Grid').innerHTML = `
+          <div class="stat-box">
+            <span>1 · ${teamHome}</span>
+            <strong>${pHomePct.toFixed(1)}%</strong>
+            <small style="color:var(--text-muted)">Fair: <strong>${fair1.toFixed(2)}</strong> | Book: <span style="color:var(--accent-cyan)">${odds1}</span></small>
+          </div>
+          <div class="stat-box">
+            <span>X · Pareggio</span>
+            <strong>${pDrawPct.toFixed(1)}%</strong>
+            <small style="color:var(--text-muted)">Fair: <strong>${fairX.toFixed(2)}</strong> | Book: <span style="color:var(--accent-cyan)">${oddsX}</span></small>
+          </div>
+          <div class="stat-box">
+            <span>2 · ${teamAway}</span>
+            <strong>${pAwayPct.toFixed(1)}%</strong>
+            <small style="color:var(--text-muted)">Fair: <strong>${fair2.toFixed(2)}</strong> | Book: <span style="color:var(--accent-cyan)">${odds2}</span></small>
+          </div>
+        `;
+
+        let valueHtml = '';
+        if (bestBet.ev > 0) {
+          valueHtml = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+              <div>
+                <span style="font-size: 12px; color: var(--accent-green); font-weight: 700;">🔥 VALUE BET (+EV) RILEVATA</span>
+                <h4 style="font-size: 18px; color: #fff; margin-top: 4px;">Puntata consigliata: ${bestBet.name}</h4>
+                <p style="font-size: 13px; color: var(--text-muted);">Valore Atteso (EV): +${(bestBet.ev * 100).toFixed(2)}% · Quota: ${bestBet.odds}</p>
+              </div>
+              <div style="text-align: right; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 16px; border-radius: 10px;">
+                <span style="font-size: 11px; color: var(--text-muted); display: block;">CRITERIO DI KELLY</span>
+                <strong style="font-size: 18px; color: var(--accent-green);">${kellyStake.toFixed(2)}%</strong> <small style="color:var(--text-muted)">bankroll</small>
+              </div>
+            </div>
+          `;
+        } else {
+          valueHtml = `<div style="text-align: center; color: var(--text-muted); padding: 10px;">❌ Nessuna Value Bet rilevata alle quote attuali (mercato efficiente o margine bookmaker sfavorevole).</div>`;
+        }
+        document.getElementById('valueBoxContent').innerHTML = valueHtml;
+
+        document.getElementById('goalsMarketsGrid').innerHTML = `
+          <div class="stat-box">
+            <span>Over 2.5 Gol</span>
+            <strong>${pOverPct.toFixed(1)}%</strong>
+            <small style="color:var(--text-muted)">Fair: ${(100/pOverPct).toFixed(2)}</small>
+          </div>
+          <div class="stat-box">
+            <span>Goal / Goal (BTTS)</span>
+            <strong>${pBttsPct.toFixed(1)}%</strong>
+            <small style="color:var(--text-muted)">Fair: ${(100/pBttsPct).toFixed(2)}</small>
+          </div>
+        `;
+
+        let exactHtml = '';
+        topScores.forEach((item, index) => {
+          const pct = (item.prob / total) * 100;
+          exactHtml += `
+            <div class="stat-box">
+              <span>#${index + 1} Più Probabile</span>
+              <strong style="font-size: 22px; color: var(--accent-purple);">${item.h} - ${item.a}</strong>
+              <small style="color:var(--text-muted);">${pct.toFixed(1)}% di probabilità</small>
+            </div>
+          `;
+        });
+        document.getElementById('exactScoresGrid').innerHTML = exactHtml;
+
+        const panel = document.getElementById('masterResultsPanel');
+        panel.style.display = 'block';
+        panel.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

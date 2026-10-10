@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Football Quant: analisi statistica e modellazione probabilistica del calcio."
+  >
+
+  <meta name="theme-color" content="#0b1020">
+
+  <title>Football Quant</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="#dashboard">
+      <span class="brand-icon">FQ</span>
+
+      <span>
+        <strong>FOOTBALL QUANT</strong>
+        <small>FOOTBALL ANALYTICS</small>
+      </span>
+    </a>
+
+    <span class="status">
+      <span class="status-dot"></span>
+      MODALITÀ SIMULAZIONE
+    </span>
+  </header>
+
+  <main class="container" id="dashboard">
+
+    <section class="hero">
+      <p class="eyebrow">QUANTITATIVE FOOTBALL LAB</p>
+
+      <h1>Analizza i dati.<br>Misura le probabilità.</h1>
+
+      <p class="hero-description">
+        Un ambiente di analisi calcistica basato su modelli
+        probabilistici, dati storici e verifiche statistiche.
+      </p>
+    </section>
+
+    <section class="metrics-grid" aria-label="Statistiche">
+
+      <article class="metric-card">
+        <span>Partite analizzate</span>
+        <strong id="matchesCount">0</strong>
+        <small>Archivio locale</small>
+      </article>
+
+      <article class="metric-card">
+        <span>Previsioni registrate</span>
+        <strong id="predictionsCount">0</strong>
+        <small>Storico del modello</small>
+      </article>
+
+      <article class="metric-card">
+        <span>Bankroll virtuale</span>
+        <strong id="bankrollValue">500,00 €</strong>
+        <small>Capitale simulato</small>
+      </article>
+
+      <article class="metric-card">
+        <span>Stato del sistema</span>
+        <strong id="systemStatus">PRONTO</strong>
+        <small>In attesa dei dati</small>
+      </article>
+
+    </section>
+
+    <section class="panel" id="import-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">DATABASE</p>
+          <h2>Importa dati storici</h2>
+        </div>
+
+        <span class="tag">CSV</span>
+      </div>
+
+      <p class="muted">
+        Carica un archivio di partite concluse per iniziare
+        a costruire un dataset utilizzabile nelle analisi.
+      </p>
+
+      <div class="upload-box">
+        <label for="csvFile" class="upload-button">
+          Seleziona file CSV
+        </label>
+
+        <input
+          type="file"
+          id="csvFile"
+          accept=".csv,text/csv"
+        >
+
+        <p id="fileStatus" class="muted" aria-live="polite">
+          Nessun file selezionato.
+        </p>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Casa</th>
+              <th>Ospite</th>
+              <th>Gol</th>
+            </tr>
+          </thead>
+
+          <tbody id="matchesTable">
+            <tr>
+              <td colspan="4" class="empty">
+                Importa un CSV per visualizzare le partite.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="analysis-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">PROBABILITY ENGINE</p>
+          <h2>Analisi statistica</h2>
+        </div>
+
+        <span class="tag">POISSON</span>
+      </div>
+
+      <p class="muted">
+        Inserisci le stime dei gol attesi. I risultati saranno
+        teorici finché il modello non sarà calibrato con dati storici.
+      </p>
+
+      <form id="analysisForm" class="analysis-form">
+
+        <label>
+          Gol attesi squadra casa
+          <input
+            id="lambdaHome"
+            type="number"
+            min="0.1"
+            max="6"
+            step="0.1"
+            value="1.5"
+            required
+          >
+        </label>
+
+        <label>
+          Gol attesi squadra ospite
+          <input
+            id="lambdaAway"
+            type="number"
+            min="0.1"
+            max="6"
+            step="0.1"
+            value="1.1"
+            required
+          >
+        </label>
+
+        <button type="submit" class="primary-button">
+          Calcola probabilità
+        </button>
+
+      </form>
+
+      <div id="analysisResults" class="results-grid">
+        <p class="empty">
+          Inserisci i parametri e avvia il calcolo.
+        </p>
+      </div>
+
+      <p class="disclaimer">
+        Le probabilità sono stime matematiche e non garantiscono
+        il risultato di una partita.
+      </p>
+    </section>
+
+    <section class="panel" id="value-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">VALUE ANALYSIS</p>
+          <h2>Analizzatore quote</h2>
+        </div>
+
+        <span class="tag">TEORICO</span>
+      </div>
+
+      <p class="muted">
+        Inserisci una probabilità stimata e una quota decimale
+        per calcolare la probabilità implicita e il valore atteso.
+      </p>
+
+      <form id="valueForm" class="analysis-form">
+
+        <label>
+          Probabilità stimata (%)
+          <input
+            id="estimatedProbability"
+            type="number"
+            min="0.1"
+            max="100"
+            step="0.1"
+            value="52"
+            required
+          >
+        </label>
+
+        <label>
+          Quota decimale
+          <input
+            id="decimalOdds"
+            type="number"
+            min="1.01"
+            max="1000"
+            step="0.01"
+            value="2.10"
+            required
+          >
+        </label>
+
+        <button type="submit" class="primary-button">
+          Analizza quota
+        </button>
+
+      </form>
+
+      <div id="valueResults" class="results-grid">
+        <p class="empty">
+          Inserisci i dati per calcolare il valore atteso.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel" id="history-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">MODEL TRACKING</p>
+          <h2>Storico delle previsioni</h2>
+        </div>
+      </div>
+
+      <p class="muted">
+        Le previsioni salvate in questo browser potranno essere
+        utilizzate per monitorare il modello.
+      </p>
+
+      <div id="predictionHistory">
+        <p class="empty">Nessuna previsione registrata.</p>
+      </div>
+
+      <button id="exportPredictions" class="secondary-button">
+        Esporta previsioni CSV
+      </button>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>FOOTBALL QUANT · VERSIONE 1.0</p>
+    <p>Analisi statistica e simulazione, senza garanzie di profitto.</p>
+  </footer>
+
+</body>
+  </html>

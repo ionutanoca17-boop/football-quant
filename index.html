@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Football Quant: L'Evoluzione del Betting - Suite Professionale di Value Betting e Bankroll Management.">
+  <meta name="description" content="Football Quant: L'Evoluzione del Betting - Suite Professionale.">
   <meta name="theme-color" content="#030712">
 
   <title>Football Quant · L'Evoluzione del Betting Pro</title>
@@ -114,7 +114,7 @@
     </a>
     <div class="status-badge">
       <span class="status-dot"></span>
-      MODALITÀ PROFESIONALE ATTIVA
+      MOTORE PRONTO
     </div>
   </header>
 
@@ -229,11 +229,11 @@
   </main>
 
   <footer class="footer">
-    <p>FOOTBALL QUANT PRO · L'EVOLUZIONE DEL BETTING V4.0</p>
+    <p>FOOTBALL QUANT PRO · L'EVOLUZIONE DEL BETTING V4.1</p>
     <p>Strumento avanzato per scommettitori professionisti e gestione rigorosa del rischio.</p>
   </footer>
 
-  <!-- SCRIPT DI CALCOLO PROFESSIONALE -->
+  <!-- SCRIPT DI CALCOLO ROBUSTO -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('masterAnalysisForm');
@@ -242,156 +242,165 @@
       form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const teamHome = document.getElementById('teamHome').value || 'Casa';
-        const teamAway = document.getElementById('teamAway').value || 'Ospite';
-        const bankroll = parseFloat(document.getElementById('bankrollInput500')?.value) || parseFloat(document.getElementById('bankrollInput').value) || 500;
-        
-        const odds1 = parseFloat(document.getElementById('odds1').value) || 2.0;
-        const oddsX = parseFloat(document.getElementById('oddsX').value) || 3.3;
-        const odds2 = parseFloat(document.getElementById('odds2').value) || 3.5;
+        try {
+          const teamHome = document.getElementById('teamHome').value || 'Casa';
+          const teamAway = document.getElementById('teamAway').value || 'Ospite';
+          const bankroll = parseFloat(document.getElementById('bankrollInput').value) || 500;
+          
+          const odds1 = parseFloat(document.getElementById('odds1').value) || 2.0;
+          const oddsX = parseFloat(document.getElementById('oddsX').value) || 3.3;
+          const odds2 = parseFloat(document.getElementById('odds2').value) || 3.5;
 
-        // 1. Calcolo Probabilità Implicite e Margine Bookmaker (Overround)
-        const rawP1 = 1 / odds1;
-        const rawPX = 1 / oddsX;
-        const rawP2 = 1 / odds2;
-        const sumRaw = rawP1 + rawPX + rawP2;
-        const bookmakerMargin = (sumRaw - 1) * 100; // es. 5.2%
+          // 1. Calcolo Probabilità Implicite e Margine Bookmaker
+          const rawP1 = 1 / odds1;
+          const rawPX = 1 / oddsX;
+          const rawP2 = 1 / odds2;
+          const sumRaw = rawP1 + rawPX + rawP2;
+          const bookmakerMargin = (sumRaw - 1) * 100;
 
-        // Probabilità pulite dal margine
-        const pHomePct = (rawP1 / sumRaw) * 100;
-        const pDrawPct = (rawPX / sumRaw) * 100;
-        const pAwayPct = (rawP2 / sumRaw) * 100;
+          const pHomePct = (rawP1 / sumRaw) * 100;
+          const pDrawPct = (rawPX / sumRaw) * 100;
+          const pAwayPct = (rawP2 / sumRaw) * 100;
 
-        const fair1 = 100 / pHomePct;
-        const fairX = 100 / pDrawPct;
-        const fair2 = 100 / pAwayPct;
+          const fair1 = 100 / pHomePct;
+          const fairX = 100 / pDrawPct;
+          const fair2 = 100 / pAwayPct;
 
-        // 2. Stima gol attesi (lambda) basata sul favore del mercato
-        const totalGoalsEst = 2.65;
-        const power1 = 1 / odds1;
-        const power2 = 1 / odds2;
-        const ratio = power1 / (power1 + power2);
-        
-        const lambdaH = Math.max(0.6, totalGoalsEst * ratio);
-        const lambdaA = Math.max(0.6, totalGoalsEst * (1 - ratio));
+          // 2. Stima gol attesi (lambda)
+          const totalGoalsEst = 2.65;
+          const power1 = 1 / odds1;
+          const power2 = 1 / odds2;
+          const ratio = power1 / (power1 + power2);
+          
+          const lambdaH = Math.max(0.6, totalGoalsEst * ratio);
+          const lambdaA = Math.max(0.6, totalGoalsEst * (1 - ratio));
 
-        function poisson(k, lambda) {
-          return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
-        }
-        function factorial(n) {
-          if (n === 0 || n === 1) return 1;
-          let res = 1;
-          for (let i = 2; i <= n; i++) res *= i;
-          return res;
-        }
-
-        let exactScores = [];
-        const maxGoals = 6;
-        let totalPoisson = 0;
-
-        for (let h = 0; h <= maxGoals; h++) {
-          for (let a = 0; a <= maxGoals; a++) {
-            const p = poisson(h, lambdaH) * poisson(a, lambdaA);
-            totalPoisson += p;
-            exactScores.push({ h, a, prob: p });
+          function poisson(k, lambda) {
+            return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
           }
-        }
+          function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            let res = 1;
+            for (let i = 2; i <= n; i++) res *= i;
+            return res;
+          }
 
-        exactScores.forEach(item => item.normProb = (item.prob / totalPoisson) * 100);
+          let exactScores = [];
+          const maxGoals = 6;
+          let totalPoisson = 0;
 
-        // Calcolo mercati secondari da Poisson
-        let pOver25 = 0, pUnder25 = 0, pBtts = 0, pDC1X = 0, pDCX2 = 0;
-        exactScores.forEach(item => {
-          const sumG = item.h + item.a;
-          if (sumG > 2.5) pOver25 += item.normProb;
-          else pUnder25 += item.normProb;
-          if (item.h > 0 && item.a > 0) pBtts += item.normProb;
-          if (item.h >= item.a) pDC1X += item.normProb;
-          if (item.a >= item.h) pDCX2 += item.normProb;
-        });
+          for (let h = 0; h <= maxGoals; h++) {
+            for (let a = 0; a <= maxGoals; a++) {
+              const p = poisson(h, lambdaH) * poisson(a, lambdaA);
+              totalPoisson += p;
+              exactScores.push({ h, a, prob: p });
+            }
+          }
 
-        exactScores.sort((a, b) => b.normProb - a.normProb);
-        const top5Scores = exactScores.slice(0, 5);
+          exactScores.forEach(item => item.normProb = (item.prob / totalPoisson) * 100);
 
-        // 3. Valutazione Value Bet (+EV) su 1X2
-        const ev1 = (pHomePct / 100) * odds1 - 1;
-        const evX = (pDrawPct / 100) * oddsX - 1;
-        const ev2 = (pAwayPct / 100) * odds2 - 1;
+          let pOver25 = 0, pUnder25 = 0, pBtts = 0, pDC1X = 0, pDCX2 = 0;
+          exactScores.forEach(item => {
+            const sumG = item.h + item.a;
+            if (sumG > 2.5) pOver25 += item.normProb;
+            else pUnder25 += item.normProb;
+            if (item.h > 0 && item.a > 0) pBtts += item.normProb;
+            if (item.h >= item.a) pDC1X += item.normProb;
+            if (item.a >= item.h) pDCX2 += item.normProb;
+          });
 
-        let bestBet = { name: "Nessuna Value Bet netta", ev: -1, odds: 0, prob: 0, type: null };
-        if (ev1 > 0 && ev1 >= evX && ev1 >= ev2) {
-          bestBet = { name: `Vittoria ${teamHome} (Segno 1)`, ev: ev1, odds: odds1, prob: pHomePct };
-        } else if (evX > 0 && evX >= ev1 && evX >= ev2) {
-          bestBet = { name: `Pareggio (Segno X)`, ev: evX, odds: oddsX, prob: pDrawPct };
-        } else if (ev2 > 0 && ev2 >= ev1 && ev2 >= evX) {
-          bestBet = { name: `Vittoria ${teamAway} (Segno 2)`, ev: ev2, odds: odds2, prob: pAwayPct };
-        }
+          exactScores.sort((a, b) => b.normProb - a.normProb);
+          const top5Scores = exactScores.slice(0, 5);
 
-        // Criterio di Kelly con conservativismo (Quarter Kelly = 25% del Kelly pieno per sicurezza professionale)
-        let kellyPctFull = 0;
-        let euroStake = 0;
-        if (bestBet.ev > 0) {
-          const b = bestBet.odds - 1;
-          const p = bestBet.prob / 100;
-          const q = 1 - p;
-          kellyPctFull = Math.max(0, ((b * p - q) / b) * 100);
-          // Usiamo il Quarter Kelly (25% di Kelly) raccomandato dai professionisti per evitare downswing pesanti
-          const quarterKelly = kellyPctFull * 0.25;
-          euroStake = (bankroll * quarterKelly) / 100;
-        }
+          // 3. Valutazione Value Bet (+EV)
+          const ev1 = (pHomePct / 100) * odds1 - 1;
+          const evX = (pDrawPct / 100) * oddsX - 1;
+          const ev2 = (pAwayPct / 100) * odds2 - 1;
 
-        // 4. Rendering HTML Dettagliato
-        document.getElementById('reportHeaderTitle').innerText = `${teamHome} vs ${teamAway} · Report Pro`;
+          let bestBet = { name: "Nessuna Value Bet netta", ev: -1, odds: 0, prob: 0 };
+          if (ev1 > 0 && ev1 >= evX && ev1 >= ev2) {
+            bestBet = { name: `Vittoria ${teamHome} (Segno 1)`, ev: ev1, odds: odds1, prob: pHomePct };
+          } else if (evX > 0 && evX >= ev1 && evX >= ev2) {
+            bestBet = { name: `Pareggio (Segno X)`, ev: evX, odds: oddsX, prob: pDrawPct };
+          } else if (ev2 > 0 && ev2 >= ev1 && ev2 >= evX) {
+            bestBet = { name: `Vittoria ${teamAway} (Segno 2)`, ev: ev2, odds: odds2, prob: pAwayPct };
+          }
 
-        document.getElementById('bookmakerMarginBox').innerHTML = `
-          ⚙️ <strong>Analisi Lavagna Bookmaker:</strong> Margine di profitto applicato dal bookmaker (Overround): <span style="color:var(--accent-amber); font-family: 'JetBrains Mono', monospace;">+${bookmakerMargin.toFixed(2)}%</span>. 
-          Le probabilità sottostanti sono state normalizzate per rimuovere questo costo nascosto.
-        `;
+          let kellyPctFull = 0;
+          let euroStake = 0;
+          if (bestBet.ev > 0) {
+            const b = bestBet.odds - 1;
+            const p = bestBet.prob / 100;
+            const q = 1 - p;
+            kellyPctFull = Math.max(0, ((b * p - q) / b) * 100);
+            const quarterKelly = kellyPctFull * 0.25;
+            euroStake = (bankroll * quarterKelly) / 100;
+          }
 
-        document.getElementById('market1x2Grid').innerHTML = `
-          <div class="stat-box">
-            <span>1 · ${teamHome}</span>
-            <strong>${pHomePct.toFixed(1)}%</strong>
-            <small style="color:var(--text-muted)">Quota Fair: <strong>${fair1.toFixed(2)}</strong> | Quota Book: <span style="color:var(--accent-cyan)">${odds1}</span></small>
-          </div>
-          <div class="stat-box">
-            <span>X · Pareggio</span>
-            <strong>${pDrawPct.toFixed(1)}%</strong>
-            <small style="color:var(--text-muted)">Quota Fair: <strong>${fairX.toFixed(2)}</strong> | Quota Book: <span style="color:var(--accent-cyan)">${oddsX}</span></small>
-          </div>
-          <div class="stat-box">
-            <span>2 · ${teamAway}</span>
-            <strong>${pAwayPct.toFixed(1)}%</strong>
-            <small style="color:var(--text-muted)">Quota Fair: <strong>${fair2.toFixed(2)}</strong> | Quota Book: <span style="color:var(--accent-cyan)">${odds2}</span></small>
-          </div>
-        `;
+          // 4. Rendering HTML
+          document.getElementById('reportHeaderTitle').innerText = `${teamHome} vs ${teamAway} · Report Pro`;
 
-        let valueHtml = '';
-        if (bestBet.ev > 0) {
-          valueHtml = `
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-              <div>
-                <span style="font-size: 12px; color: var(--accent-green); font-weight: 700; letter-spacing: 1px;">🔥 VALUE BET (+EV) IDENTIFICATA</span>
-                <h4 style="font-size: 20px; color: #fff; margin-top: 6px;">Consiglio di Gioco: <strong>${bestBet.name}</strong></h4>
-                <p style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">
-                  Valore Atteso (EV): <strong style="color:var(--accent-green);">+${(bestBet.ev * 100).toFixed(2)}%</strong> · Quota Sfruttata: <strong>${bestBet.odds}</strong>
-                </p>
-              </div>
-              <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 16px 24px; border-radius: 12px; text-align: right;">
-                <span style="font-size: 11px; color: var(--text-muted); display: block; text-transform: uppercase;">Budget: ${bankroll.toFixed(2)} €</span>
-                <span style="font-size: 12px; color: var(--accent-green); font-weight: 600; display: block; margin-top: 2px;">Puntata Consigliata (Q-Kelly)</span>
-                <strong style="font-size: 24px; color: var(--accent-green); font-family: 'JetBrains Mono', monospace;">€ ${euroStake.toFixed(2)}</strong>
-                <small style="display: block; color: var(--text-muted); font-size: 11px;">(${((euroStake/bankroll)*100).toFixed(2)}% del bankroll)</small>
-              </div>
+          document.getElementById('bookmakerMarginBox').innerHTML = `
+            ⚙️ <strong>Analisi Lavagna Bookmaker:</strong> Margine di profitto applicato (Overround): <span style="color:var(--accent-amber); font-family: 'JetBrains Mono', monospace;">+${bookmakerMargin.toFixed(2)}%</span>.
+          `;
+
+          document.getElementById('market1x2Grid').innerHTML = `
+            <div class="stat-box">
+              <span>1 · ${teamHome}</span>
+              <strong>${pHomePct.toFixed(1)}%</strong>
+              <small style="color:var(--text-muted)">Fair: <strong>${fair1.toFixed(2)}</strong> | Quota: <span style="color:var(--accent-cyan)">${odds1}</span></small>
+            </div>
+            <div class="stat-box">
+              <span>X · Pareggio</span>
+              <strong>${pDrawPct.toFixed(1)}%</strong>
+              <small style="color:var(--text-muted)">Fair: <strong>${fairX.toFixed(2)}</strong> | Quota: <span style="color:var(--accent-cyan)">${oddsX}</span></small>
+            </div>
+            <div class="stat-box">
+              <span>2 · ${teamAway}</span>
+              <strong>${pAwayPct.toFixed(1)}%</strong>
+              <small style="color:var(--text-muted)">Fair: <strong>${fair2.toFixed(2)}</strong> | Quota: <span style="color:var(--accent-cyan)">${odds2}</span></small>
             </div>
           `;
-        } else {
-          valueHtml = `
-            <div style="text-align: center; padding: 15px;">
-              <span style="font-size: 15px; color: var(--text-muted);">❌ <strong>Nessuna Value Bet rilevata sul mercato 1X2</strong> alle quote attuali. Il bookmaker non offre un vantaggio matematico sufficiente rispetto al rischio. Ti consigliamo di attendere match con quote più disalineate.</span>
-            </div>
-          `;
-        }
-        document.getElementById('valueBoxContent').innerHTML = valueHtml;
 
-        document.getElementById('s
+          let valueHtml = '';
+          if (bestBet.ev > 0) {
+            valueHtml = `
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div>
+                  <span style="font-size: 12px; color: var(--accent-green); font-weight: 700;">🔥 VALUE BET (+EV) IDENTIFICATA</span>
+                  <h4 style="font-size: 20px; color: #fff; margin-top: 6px;">Consiglio: <strong>${bestBet.name}</strong></h4>
+                  <p style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">
+                    Valore Atteso (EV): <strong style="color:var(--accent-green);">+${(bestBet.ev * 100).toFixed(2)}%</strong> · Quota: <strong>${bestBet.odds}</strong>
+                  </p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 16px 24px; border-radius: 12px; text-align: right;">
+                  <span style="font-size: 11px; color: var(--text-muted); display: block; text-transform: uppercase;">Bankroll: ${bankroll.toFixed(2)} €</span>
+                  <span style="font-size: 12px; color: var(--accent-green); font-weight: 600; display: block; margin-top: 2px;">Puntata Consigliata (Q-Kelly)</span>
+                  <strong style="font-size: 24px; color: var(--accent-green); font-family: 'JetBrains Mono', monospace;">€ ${euroStake.toFixed(2)}</strong>
+                </div>
+              </div>
+            `;
+          } else {
+            valueHtml = `<div style="text-align: center; padding: 15px; color: var(--text-muted);">❌ Nessuna Value Bet netta sul mercato 1X2 alle quote inserite.</div>`;
+          }
+          document.getElementById('valueBoxContent').innerHTML = valueHtml;
+
+          document.getElementById('secondaryMarketsGrid').innerHTML = `
+            <div class="stat-box">
+              <span>Over 2.5 Gol</span>
+              <strong>${pOver25.toFixed(1)}%</strong>
+              <small style="color:var(--text-muted)">Fair: ${(100/pOver25).toFixed(2)}</small>
+            </div>
+            <div class="stat-box">
+              <span>Under 2.5 Gol</span>
+              <strong>${pUnder25.toFixed(1)}%</strong>
+              <small style="color:var(--text-muted)">Fair: ${(100/pUnder25).toFixed(2)}</small>
+            </div>
+            <div class="stat-box">
+              <span>Goal / Goal (BTTS)</span>
+              <strong>${pBtts.toFixed(1)}%</strong>
+              <small style="color:var(--text-muted)">Fair: ${(100/pBtts).toFixed(2)}</small>
+            </div>
+            <div class="stat-box">
+              <span>Doppia Chance 1X</span>
+      

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Betting Analyzer Pro</title>
-    <!-- Tailwind CSS per un design moderno -->
+    <title>Football Quant Pro</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
@@ -12,29 +12,47 @@
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Header -->
         <header class="text-center mb-10">
-            <h1 class="text-3xl font-extrabold tracking-tight text-emerald-400 sm:text-4xl">⚽ Betting Analyzer Pro</h1>
-            <p class="mt-2 text-slate-400">Inserisci le quote 1X2 per generare l'analisi avanzata, le probabilità e il money management (Budget: 500€).</p>
+            <h1 class="text-3xl font-extrabold tracking-tight text-emerald-400 sm:text-4xl">⚽ FOOTBALL QUANT PRO</h1>
+            <p class="mt-2 text-slate-400">L'evoluzione del betting: analisi avanzata e gestione del rischio.</p>
         </header>
 
         <!-- Form Input -->
         <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-emerald-300">Inserimento Quote</h2>
+            <h2 class="text-xl font-semibold mb-4 text-emerald-300">Inserimento Dati Match</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Squadra A (Casa)</label>
+                    <input type="text" id="squadraCasa" placeholder="es. Inter" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500" value="Casa">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Squadra B (Ospite)</label>
+                    <input type="text" id="squadraOspite" placeholder="es. Milan" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500" value="Ospite">
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-slate-300 mb-1">Bankroll Attuale (€)</label>
+                <input type="number" id="bankroll" value="500" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Quota 1 (Vittoria Casa)</label>
-                    <input type="number" step="0.01" id="quota1" placeholder="es. 2.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Quota 1 (Casa)</label>
+                    <input type="number" step="0.01" id="quota1" value="2.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Quota X (Pareggio)</label>
-                    <input type="number" step="0.01" id="quotaX" placeholder="es. 3.40" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    <input type="number" step="0.01" id="quotaX" value="3.40" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Quota 2 (Vittoria Ospite)</label>
-                    <input type="number" step="0.01" id="quota2" placeholder="es. 3.60" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Quota 2 (Ospite)</label>
+                    <input type="number" step="0.01" id="quota2" value="3.60" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
                 </div>
             </div>
-            <button onclick="eseguiAnalisi()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 px-6 rounded-xl transition duration-200 shadow-lg shadow-emerald-500/20">
-                Avvia Analisi Completa
+
+            <button type="button" onclick="eseguiAnalisi()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3.5 px-6 rounded-xl transition duration-200 shadow-lg shadow-emerald-500/20 cursor-pointer">
+                🚀 GENERA REPORT DI BETTING PROFESSIONALE
             </button>
         </div>
 
@@ -45,7 +63,7 @@
                 <h3 class="text-lg font-semibold mb-4 text-emerald-300">📊 Probabilità Reali (Senza Aggio)</h3>
                 <div class="grid grid-cols-3 gap-4 text-center">
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                        <span class="block text-sm text-slate-400">Casa (1)</span>
+                        <span id="labelCasa" class="block text-sm text-slate-400">Casa</span>
                         <span id="prob1" class="text-2xl font-bold text-white">-</span>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
@@ -53,12 +71,11 @@
                         <span id="probX" class="text-2xl font-bold text-white">-</span>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                        <span class="block text-sm text-slate-400">Ospite (2)</span>
+                        <span id="labelOspite" class="block text-sm text-slate-400">Ospite</span>
                         <span id="prob2" class="text-2xl font-bold text-white">-</span>
                     </div>
                 </div>
-            <!-- Info aggiuntive -->
-            <p id="aggioInfo" class="mt-4 text-xs text-slate-400 text-right"></p>
+                <p id="aggioInfo" class="mt-4 text-xs text-slate-400 text-right"></p>
             </div>
 
             <!-- Pronostico & xG -->
@@ -71,11 +88,11 @@
                 <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
                     <h3 class="text-lg font-semibold mb-3 text-emerald-300">📈 xG Stimati (Expected Goals)</h3>
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-slate-300">Casa:</span>
+                        <span id="xgLabelCasa" class="text-slate-300">Casa:</span>
                         <span id="xgCasa" class="text-xl font-bold text-emerald-400">-</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-300">Ospite:</span>
+                        <span id="xgLabelOspite" class="text-slate-300">Ospite:</span>
                         <span id="xgOspite" class="text-xl font-bold text-emerald-400">-</span>
                     </div>
                 </div>
@@ -83,7 +100,7 @@
 
             <!-- Value Bet & Budget Management -->
             <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
-                <h3 class="text-lg font-semibold mb-4 text-emerald-300">💰 Money Management (Budget: 500 €)</h3>
+                <h3 class="text-lg font-semibold mb-4 text-emerald-300">💰 Money Management & Budget</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
                         <span class="block text-sm text-slate-400 mb-1">Stato Value Bet</span>
@@ -100,12 +117,16 @@
 
     <!-- Footer -->
     <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-800 mt-12">
-        Creato per GitHub & Cloudflare Pages • Gioca in modo responsabile.
+        FOOTBALL QUANT PRO • L'evoluzione del betting V4.2
     </footer>
 
     <!-- Script di Calcolo -->
     <script>
         function eseguiAnalisi() {
+            const nomeCasa = document.getElementById('squadraCasa').value || 'Casa';
+            const nomeOspite = document.getElementById('squadraOspite').value || 'Ospite';
+            const budget = parseFloat(document.getElementById('bankroll').value) || 500;
+            
             const q1 = parseFloat(document.getElementById('quota1').value);
             const qX = parseFloat(document.getElementById('quotaX').value);
             const q2 = parseFloat(document.getElementById('quota2').value);
@@ -115,45 +136,47 @@
                 return;
             }
 
-            // Calcolo probabilità implicite grezze
+            // Calcolo probabilità
             const inv1 = 1 / q1;
             const invX = 1 / qX;
             const inv2 = 1 / q2;
             const sommaInv = inv1 + invX + inv2;
 
-            // Aggio del bookmaker
             const aggio = ((sommaInv - 1) * 100).toFixed(2);
 
-            // Probabilità reali normalizzate (senza aggio)
             const p1 = (inv1 / sommaInv) * 100;
             const pX = (invX / sommaInv) * 100;
             const p2 = (inv2 / sommaInv) * 100;
 
-            // Mostra a schermo le probabilità
+            // Aggiorna etichette dinamiche
+            document.getElementById('labelCasa').innerText = nomeCasa;
+            document.getElementById('labelOspite').innerText = nomeOspite;
+            document.getElementById('xgLabelCasa').innerText = nomeCasa + ':';
+            document.getElementById('xgLabelOspite').innerText = nomeOspite + ':';
+
             document.getElementById('prob1').innerText = p1.toFixed(1) + '%';
             document.getElementById('probX').innerText = pX.toFixed(1) + '%';
             document.getElementById('prob2').innerText = p2.toFixed(1) + '%';
             document.getElementById('aggioInfo').innerText = `Aggio / Margine del bookmaker: ${aggio}%`;
 
-            // Pronostico basato sulla quota più bassa / probabilità più alta
             let pronostico = "";
             let motivazione = "";
             let quotaScelta = 0;
             let probScelta = 0;
 
             if (p1 >= pX && p1 >= p2) {
-                pronostico = "1 (Vittoria Casa)";
-                motivazione = `La squadra di casa è favorita con una probabilità stimata del ${p1.toFixed(1)}%.`;
+                pronostico = `1 (${nomeCasa} Vende Cara la Pelle / Win)`;
+                motivazione = `${nomeCasa} è favorita con una probabilità stimata del ${p1.toFixed(1)}%.`;
                 quotaScelta = q1;
                 probScelta = p1 / 100;
             } else if (p2 >= p1 && p2 >= pX) {
-                pronostico = "2 (Vittoria Ospite)";
-                motivazione = `La squadra ospite gode dei favori del pronostico con il ${p2.toFixed(1)}% di probabilità.`;
+                pronostico = `2 (${nomeOspite} Favorita)`;
+                motivazione = `${nomeOspite} gode dei favori del pronostico con il ${p2.toFixed(1)}% di probabilità.`;
                 quotaScelta = q2;
                 probScelta = p2 / 100;
             } else {
-                pronostico = "1X o Under 2.5 (Equilibrata)";
-                motivazione = "Partita molto equilibrata, alte probabilità di pareggio o match bloccato.";
+                pronostico = "1X o Match da Under (Equilibrato)";
+                motivazione = "Incontro molto equilibrato, alte probabilità di pareggio o match bloccato tatticamente.";
                 quotaScelta = qX;
                 probScelta = pX / 100;
             }
@@ -161,41 +184,36 @@
             document.getElementById('pronosticoBox').innerText = pronostico;
             document.getElementById('pronosticoMotivazione').innerText = motivazione;
 
-            // xG Stimati empiricamente dalle quote
+            // xG Stimati
             const xgC = (2.2 * (p1 / 100) + 0.8 * (pX / 100)).toFixed(2);
             const xgO = (2.2 * (p2 / 100) + 0.8 * (pX / 100)).toFixed(2);
             document.getElementById('xgCasa').innerText = xgC;
             document.getElementById('xgOspite').innerText = xgO;
 
-            // Value Bet Check (Semplificato: quota > 1 / probabilità stimata)
-            // Se la quota offerta è maggiore del valore teorico puro
+            // Value Bet & Stake
             const valoreTeorico = 1 / probScelta;
             const isValue = quotaScelta > valoreTeorico;
 
             const valueStatusEl = document.getElementById('valueBetStatus');
             const stakeEl = document.getElementById('stakeConsigliato');
             
-            const budget = 500;
             let stakeConsigliato = 0;
 
             if (isValue) {
                 valueStatusEl.innerHTML = `<span class="text-emerald-400">✔ Value Bet Rilevata!</span>`;
-                // Stake prudente basato sul criterio di Kelly frazionato (es. 2% - 4% del budget)
-                stakeConsigliato = budget * 0.03; // 3% di 500 = 15€
+                stakeConsigliato = budget * 0.03; // 3% del budget
             } else {
                 valueStatusEl.innerHTML = `<span class="text-amber-400">✖ Nessun Valore di Mercato</span>`;
-                stakeConsigliato = budget * 0.01; // Stake minimo di prudenza (1% = 5€)
+                stakeConsigliato = budget * 0.01; // 1% prudenziale
             }
 
             stakeEl.innerText = `€ ${stakeConsigliato.toFixed(2)} (${((stakeConsigliato/budget)*100).toFixed(1)}% del budget)`;
 
-            // Rendi visibile il blocco dei risultati
-            document.getElementById('risultati').classList.remove('hidden');
-            
-            // Scroll fluido verso i risultati
-            document.getElementById('risultati').scrollIntoView({ behavior: 'smooth' });
+            // Mostra i risultati e scorri la pagina
+            const risDiv = document.getElementById('risultati');
+            risDiv.classList.remove('hidden');
+            risDiv.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
 </html>
-
